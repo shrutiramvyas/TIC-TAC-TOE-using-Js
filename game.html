@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic Tac Toe</title>
+    <style>
+      body {
+        margin: 0px;
+        box-sizing: border-box;
+      }
+      .outer-container {
+        display: flex;
+      }
+      .inner-container {
+        margin: 10px;
+        border: 2px solid black;
+        height: 82vh;
+        width: 82vh;
+        display: flex;
+      }
+      .row1,
+      .row2,
+      .row3 {
+        margin: 1px;
+      }
+      .one,
+      .two,
+      .three,
+      .four,
+      .five,
+      .six,
+      .seven,
+      .eight,
+      .nine {
+        border: 2px solid black;
+        height: 26vh;
+        width: 26vh;
+        margin: 2px;
+        font-weight: 400;
+        font-size: 170px;
+        font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+          "Lucida Sans", Arial, sans-serif;
+        text-align: center;
+        color: white;
+      }
+      form {
+        background-color: coral;
+        font-size: x-large;
+        height: 10vh;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Tic tac toe</h1>
+    </header>
+    <section class="outer-container">
+      <div class="inner-container">
+        <div class="row1">
+          <div class="one" id="1" onclick="play(this)"></div>
+          <div class="four" id="4" onClick="play(this)"></div>
+          <div class="seven" id="7" onClick="play(this)"></div>
+        </div>
+        <div class="row2">
+          <div class="two" id="2" onClick="play(this)"></div>
+          <div class="five" id="5" onClick="play(this)"></div>
+          <div class="eight" id="8" onClick="play(this)"></div>
+        </div>
+        <div class="row3">
+          <div class="three" id="3" onClick="play(this)"></div>
+          <div class="six" id="6" onClick="play(this)"></div>
+          <div class="nine" id="9" onClick="play(this)"></div>
+        </div>
+      </div>
+      <div class="secondContainer">
+        <form>
+          <label for="text">Enter Your Name: </label>
+          <input type="text" name="textName" />
+        </form>
+        <div class="trackScore">
+          <h3>Track Score</h3>
+        </div>
+      </div>
+    </section>
+    <script>
+      let gameArray = [];
+      let boardArray = [];
+      let human = document.getElementsByName("textName");
+      let playerIndex = 0;
+      let playerIdentifier = ["X", "O"];
+      let playerColor = ["#99d932", "#d9327a"];
+      let slotNumberLeft = [];
+      let winner;
+      const winSequence = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+        [1, 4, 7],
+        [2, 5, 8],
+        [3, 6, 9],
+        [1, 5, 9],
+        [3, 5, 7],
+      ];
+
+      for (i = 0; i < 10; i++) {
+        gameArray[i] = document.getElementById(i + 1);
+      }
+
+      for (i = 0; i < 10; i++) {
+        boardArray[i] = " ";
+      }
+      for (i = 0; i < 9; i++) {
+        slotNumberLeft[i] = i + 1;
+      }
+      function play(ele) {
+        console.log("human player");
+        if (ele.id == slotNumberLeft[ele.id - 1]) {
+          console.log(ele.id);
+          delete slotNumberLeft[ele.id - 1];
+          delete gameArray[ele.id - 1];
+          console.log(slotNumberLeft);
+          boardArray[ele.id - 1] = playerIdentifier[playerIndex];
+          ele.style.background = playerColor[playerIndex];
+          ele.innerHTML = playerIdentifier[playerIndex];
+          playerIndex = otherPlayerIndex(playerIndex);
+          playComputer();
+        }
+      }
+      function otherPlayerIndex(playerIndex) {
+        return playerIndex == 0 ? 1 : 0;
+      }
+
+      function playComputer() {
+        for (
+          winSequenceNumber = 0;
+          winSequenceNumber < winSequence.length;
+          winSequenceNumber++
+        ) {
+          let ourAttactCount = 0;
+          let opponentAttactCount = 0;
+          let locationnotAttactTillNow = 0;
+          for (
+            checkNumber = 0;
+            checkNumber < winSequence[winSequenceNumber].length;
+            checkNumber++
+          ) {
+            if (
+              "X" == boardArray[winSequence[winSequenceNumber][checkNumber] - 1]
+            ) {
+              ourAttactCount++;
+            } else if (
+              "O" == boardArray[winSequence[winSequenceNumber][checkNumber] - 1]
+            ) {
+              opponentAttactCount++;
+            } else {
+              locationnotAttactTillNow++;
+            }
+          }
+          console.log(
+            ourAttactCount,
+            opponentAttactCount,
+            locationnotAttactTillNow
+          );
+          if (ourAttactCount == 2 && opponentAttactCount == 0) {
+            attactToWin(checkNumber, winSequenceNumber, locationnotAttactTillNow);
+          } else if (ourAttactCount == 0 && opponentAttactCount == 2) {
+            attactToBlock();
+          } else if (ourAttactCount == 1 && opponentAttactCount == 0) {
+            attactToWin(checkNumber, winSequenceNumber, locationnotAttactTillNow);
+          }
+        }
+        function attactToWin(
+          checkNumber,
+          winSequenceNumber,
+          locationnotAttactTillNow
+        ) {
+          if (locationnotAttactTillNow == 2 || locationnotAttactTillNow == 1) {
+            ele = gameArray[winSequenceNumber][checkNumber];
+            console.log(ele);
+            ele.style.background = playerColor[playerIndex];
+            ele.innerHTML = playerIdentifier[playerIndex];
+            playerIndex = otherPlayerIndex(playerIndex);
+          }
+        }
+      }
+
+      // delete slotNumberLeft[random];
+      // let ele = gameArray[random];
+      // console.log(slotNumberLeft);
+      // ele.style.background = playerColor[playerIndex];
+      // ele.innerHTML = playerIdentifier[playerIndex];
+      // playerIndex = otherPlayerIndex(playerIndex)
+    </script>
+  </body>
+</html>
